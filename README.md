@@ -4,7 +4,7 @@ This branch currently provides manual control with gui (gui:=true) or joystick (
 
 usv_teleop provides direct control of sail and rudder joint angles.
 
-On the branch usv_navigation of usv_sim_lsa:
+On branch usv_navigation of usv_sim_lsa:
 
 ```
         roslaunch usv_sim sailboat_scenario0.launch parse:=true
