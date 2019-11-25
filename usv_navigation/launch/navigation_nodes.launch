@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch> 
+	<node name="patrol" pkg="usv_navigation" type="patrol_pid_scene1.py" ns="sailboat"/>
+	<node name="heading_control" pkg="usv_base_ctrl" type="sailboat_control_heading.py" ns="sailboat"/>
+</launch>
