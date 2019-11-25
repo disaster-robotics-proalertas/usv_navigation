@@ -1,8 +1,12 @@
 # usv_navigation
 
+This repository should be install in a different catkin_workspace.
+
 This branch currently provides manual control with gui (gui:=true) or joystick (usv_teleop) and automatic heading control.
 
 usv_teleop provides direct control of sail and rudder joint angles.
+
+## Teleop example
 
 On branch usv_navigation of usv_sim_lsa:
 
