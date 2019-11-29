@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <launch> 
-	<node name="patrol" pkg="usv_navigation" type="patrol_pid_scene1.py" ns="sailboat"/>
+	<!--node name="patrol" pkg="usv_navigation" type="patrol_pid_scene1.py" ns="sailboat"/-->
 	<node name="heading_control" pkg="usv_base_ctrl" type="sailboat_control_heading.py" ns="sailboat"/>
+
+	<node pkg="rosbag" type="record" name="record_sailboat" args="-o /$(find usv_navigation)bags/sailboat_qlearning /sailboat/state" output="screen"/>
 </launch>

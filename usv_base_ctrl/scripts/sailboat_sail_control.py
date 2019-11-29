@@ -35,15 +35,6 @@ rudder_med = (rudder_min + rudder_max)/2
 heeling = 0
 spHeading = 10 
 isTacking = 0
-target_angle_sail = 0
-
-def get_pose(initial_pose_tmp):
-    global initial_pose 
-    initial_pose = initial_pose_tmp
-
-def get_target(target_pose_tmp):
-    global target_pose 
-    target_pose = target_pose_tmp
     
 def sail_ctrl_msg():
     global actuator_vel
@@ -55,23 +46,6 @@ def sail_ctrl_msg():
     msg.effort = []
     return msg
 
-def verify_result():
-    global target_distance
-    global result
-    global f_distance
-    if target_distance < f_distance:
-        result.data = 1
-    if target_distance >= f_distance:    
-        result.data = 0
-    return result
-
-def angle_saturation(sensor):
-    if sensor > 180:
-        sensor = sensor - 360
-    if sensor < -180:
-        sensor = sensor + 360
-    return sensor
-
 def talker_ctrl():
     global rate_value
     global currentHeading
@@ -80,7 +54,7 @@ def talker_ctrl():
     global heeling
     global spHeading
 
-    rospy.init_node('usv_simple_ctrl', anonymous=True)
+    rospy.init_node('sailboat_sail_control', anonymous=True)
     rate = rospy.Rate(rate_value) # 10h
     # publishes to thruster and rudder topics
     #pub_sail = rospy.Publisher('angleLimits', Float64, queue_size=10)
@@ -128,43 +102,32 @@ def sail_ctrl():
     global current_heading
     global windDir
     global heeling
-    global target_angle_sail
     # receber posicaoo do vento (no ref do veleiro)
     x = rospy.get_param('/uwsim/wind/x')
     y = rospy.get_param('/uwsim/wind/y')
     global_dir = math.atan2(y,x)
-    #heeling = angle_saturation(math.degrees(global_dir)+180)
-    #rospy.loginfo("valor de wind_dir = %f", math.degrees(windDir.data))
+    heeling = angle_saturation(math.degrees(global_dir)+180)
+    rospy.loginfo("valor de wind_dir = %f", math.degrees(windDir))
     rospy.loginfo("global_dir = %f", math.degrees(global_dir))
-    rospy.loginfo("current_heading = %f", math.degrees(target_angle_sail))
-    #wind_dir = abs(global_dir) + abs(target_angle_sail)
-    wind_dir = global_dir - target_angle_sail
+    rospy.loginfo("current_heading = %f", math.degrees(current_heading))
+    wind_dir = global_dir - current_heading
+    wind_dir = angle_saturation(math.degrees(wind_dir)+180)
+    windDir.data = math.radians(wind_dir)
 
-    wind_dir = math.radians(angle_saturation(math.degrees(wind_dir)+180))
-    windDir.data = wind_dir
-
-    #rospy.loginfo("wind_dir = %f", wind_dir)
+    #rospy.loginfo("wind_dir = %f", wind_dr)
     #rospy.loginfo("valor de pi/2 = %f", math.pi/2)
     #rospy.loginfo("valor de wind_dir/pi/2 = %f", wind_dir/math.pi/2)
     #rospy.loginfo("valor de sail_max - sail_min = %f", sail_max - sail_min)
     #rospy.loginfo("valor de (sail_max - sail_min) * (wind_dir/(math.pi/2)) = %f", (sail_max - sail_min) * (wind_dir/(math.pi/2)))
     #rospy.loginfo("valor de sail_min = %f", sail_min)
     #sail_angle = sail_min + (sail_max - sail_min) * (wind_dir/180)
-
-    #wind_dir = wind_dir - math.radians(180)
-    #wind_dir = math.radians(angle_saturation(math.degrees(wind_dir)))
-    rospy.loginfo("wind_dir = %f", math.degrees(wind_dir))
     
-    sail_angle = wind_dir/2;
-
-    if math.degrees(sail_angle) < 0:
-        sail_angle = sail_angle
-    elif math.degrees(sail_angle) > 0:
-        sail_angle = sail_angle
-
+    sail_angle = math.radians(wind_dir)/2;
+    if math.degrees(sail_angle) < -80:
+        sail_angle = -sail_angle
     #if sail_angle < 0:
     #    sail_angle = -sail_angle
-    rospy.loginfo("sail angle = %f", math.degrees(sail_angle))
+#    rospy.loginfo("sail angle = %f", math.degrees(sail_angle))
     return sail_angle
 
 def rudder_ctrl():
@@ -180,7 +143,6 @@ def rudder_ctrl():
     global current_heading
     global currentHeading
     global spHeading
-    global target_angle_sail
 
     x1 = initial_pose.pose.pose.position.x
     y1 = initial_pose.pose.pose.position.y
@@ -202,8 +164,7 @@ def rudder_ctrl():
 
     # target_angle = initial_pose.pose.pose.orientation.yaw
     target_angle = math.degrees(euler[2])
-    target_angle_sail = euler[2]
-    rospy.loginfo("target_angle %f", target_angle_sail)
+    #rospy.loginfo("target_angle %f", target_angle)
 
 #    rospy.loginfo(sp_angle)
     sp_angle = angle_saturation(sp_angle)

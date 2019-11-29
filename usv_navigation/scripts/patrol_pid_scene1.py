@@ -74,4 +74,3 @@ if __name__ == '__main__':
 	    rospy.logerr("ROS InterruptException! Just ignore the exception!") 
         except rospy.ROSTimeMovedBackwardsException:
 	    rospy.logerr("ROS Time Backwards! Just ignore the exception!")
-	
