@@ -15,7 +15,7 @@ result = Float64()
 result.data = 0
 x_offset = 50
 y_offset = 50
-resolution = 15
+resolution = 5
 maxSimulations = 1
 
 with open('tst.txt', 'rb') as file:
@@ -26,6 +26,9 @@ with open('tst.txt', 'rb') as file:
         ponto.x = float(row[0])
         ponto.y = float(row[1])
         waypoints.append(ponto)
+
+    waypoints = list(reversed(waypoints))
+    #print(waypoints)
 
 def goal_pose(pose):
     goal_tmp = Odometry()
