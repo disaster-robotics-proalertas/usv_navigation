@@ -1,6 +1,6 @@
 # usv_navigation
 
-This repository should be install in a different catkin_workspace.
+This repository should be install in a different catkin_workspace and compiled with the *catkin_make_isolated* command.
 
 This branch currently provides manual control with gui (gui:=true) or joystick (usv_teleop) and automatic heading control.
 
